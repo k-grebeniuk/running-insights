@@ -1,55 +1,69 @@
-from playwright.sync_api import sync_playwright
-import pandas as pd
-import time
+from playwright.sync_api import Page
 
-URL = "https://heroleague.ru/results/zabeg2026_554234"
 
-all_results = []
+def get_headers(page: Page) -> list[str]:
+    """
+    Извлекает названия колонок таблицы участников.
 
-with sync_playwright() as p:
+    Args:
+        page (Page): Открытая страница браузера Playwright, содержащая таблицу результатов.
+    Returns:
+        list[str]: Список названий колонок таблицы.
+                  Например:
+                  [
+                    "Номер",
+                    "Имя",
+                    "Фамилия",
+                    "Категория"
+                  ]
+    """
 
-    browser = p.chromium.launch(headless=False)
+    headers = page.locator("div[role='columnheader']").all_inner_texts()
 
-    page = browser.new_page()
+    return [header.replace("↕", "").strip()for header in headers]
 
-    page.goto(URL)
 
-    # ждем загрузку таблицы
-    page.wait_for_selector('div[role="row"]')
+def parse_rows(page: Page, headers: list[str]) -> list[dict]:
+    """
+    Извлекает данные участников из строк таблицы.
 
-    time.sleep(3)
+    Args:
+        page (Page): Открытая страница результатов Playwright.
+        headers (list[str]): Список названий колонок таблицы.
+    Returns:
+        list[dict]: Список словарей, где каждый словарь представляет одного участника.
+    """
 
-    # получаем все строки
-    rows = page.locator('div[role="row"]').all()
-
-    print(f"Найдено строк: {len(rows)}")
+    results = []
+    rows = page.locator("div[role='row']").all()
 
     for row in rows:
+        cells = row.locator("div[role='cell']").all_inner_texts()
 
-        cells = row.locator('div[role="cell"]').all_inner_texts()
-
-        # пропускаем пустые строки
         if not cells:
             continue
 
-        print(cells)
+        participant = {}
 
-        all_results.append({
-            "bib": cells[0] if len(cells) > 0 else None,
-            "name": cells[1] if len(cells) > 1 else None,
-            "surname": cells[2] if len(cells) > 2 else None,
-            "category": cells[3] if len(cells) > 3 else None,
-            "time_clean": cells[4] if len(cells) > 4 else None,
-            "place_category": cells[5] if len(cells) > 5 else None,
-            "status": cells[6] if len(cells) > 6 else None,
-        })
+        for header, value in zip(headers, cells):
+            participant[header] = value
 
-    browser.close()
+        results.append(participant)
 
-df = pd.DataFrame(all_results)
+    return results
 
-print(df.head())
 
-df.to_csv("data//zabeg_results.csv", index=False)
+def parse_participants(page: Page) -> list[dict]:
+    """
+    Полностью извлекает участников из таблицы результатов.
 
-print("CSV сохранен")
+    Args:
+        page (Page): Открытая страница результатов Playwright.
+    Returns:
+        list[dict]: Список участников соревнования.
+    """
+
+    headers = get_headers(page)
+    participants = parse_rows(page, headers)
+
+    return participants

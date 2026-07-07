@@ -1,7 +1,19 @@
-import time
+from playwright.sync_api import Page
 
 
-def get_last_page(page):
+def get_last_page(page: Page) -> int:
+    """
+    Определяет номер последней страницы пагинации.
+
+    Args:
+        page (Page):
+            Открытая страница результатов Playwright.
+
+    Returns:
+        int:
+            Номер последней страницы.
+    """
+    
     links = page.locator("nav[aria-label='Countries Pagination'] a").all_inner_texts()
     pages = [int(x) for x in links if x.isdigit()]
 
