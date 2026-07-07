@@ -5,6 +5,7 @@ from paginator import (
     get_current_page,
 )
 from parser import parse_participants
+from storage import save_participants
 
 
 
@@ -25,18 +26,24 @@ def main():
 
         print("Последняя страница:", last_page)
 
-        # Проверяем parser:
-        rows = parse_participants(page)
-        for row in rows:
-            print(row)
 
+        for page_num in range(1, last_page + 1):
 
+            print(f"Парсим страницу {page_num}/{last_page}")
 
-        #for page_num in range(1, last_page + 1):
-            #go_to_page(page, page_num)
-            #current = get_current_page(page)
+            # переходим на нужную страницу
+            go_to_page(page,page_num)
 
-            #print(f"Обработка страницы {current} из {last_page}")
+            # проверяем, что реально перешли
+            current = get_current_page(page)
+            print(f"Текущая страница: {current}")
+
+            # извлекаем участников
+            participants = parse_participants(page)
+            print(f"Получено участников: {len(participants)}")
+
+            # сохраняем в CSV
+            save_participants(participants,'event_id')
 
 
     finally:
