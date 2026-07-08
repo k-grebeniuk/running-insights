@@ -5,7 +5,14 @@ from paginator import (
     get_current_page,
 )
 from parser import parse_participants
-from storage import save_participants
+from storage import (
+    save_participants,
+    save_events
+)
+from event_parser import (
+    select_event_filter,
+    parse_events
+)
 
 
 
@@ -51,5 +58,48 @@ def main():
         playwright.stop()
 
 
+RESULTS_URL = "https://heroleague.ru/results"
+
+
+def collect_events() -> None:
+    """
+    Собирает список всех мероприятий и сохраняет его в CSV.
+
+    Последовательность работы:
+        1. Открывает браузер.
+        2. Переходит на страницу результатов.
+        3. Выбирает фильтр «Забег».
+        4. Извлекает данные о мероприятиях.
+        5. Сохраняет их в файл.
+        6. Закрывает браузер.
+
+    Returns:
+        None:
+            Функция сохраняет данные и ничего не возвращает.
+    """
+
+    playwright, browser, page = create_browser()
+
+    try:
+        page.goto(RESULTS_URL)
+
+        page.wait_for_timeout(2000)
+
+        select_event_filter(page)
+
+        events = parse_events(page)
+
+        #добавляем id для каждого мероприятия
+        for event_id, event in enumerate(events, start=1):
+            event["event_id"] = event_id
+
+        save_events(events)
+
+
+    finally:
+        browser.close()
+        playwright.stop()
+
+
 if __name__ == "__main__":
-    main()
+    collect_events()

@@ -1,15 +1,25 @@
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import (
+    sync_playwright,
+    Playwright,
+    Browser,
+    Page
+)
 
 
-def create_browser() -> tuple:
+def create_browser() -> tuple[Playwright, Browser, Page]:
     """
     Создает экземпляр браузера Chromium.
-
+    
     Returns:
         tuple:
-            playwright,
-            browser,
-            page
+            Playwright:
+                Управление Playwright.
+
+            Browser:
+                Запущенный экземпляр браузера Chromium.
+
+            Page:
+                Открытая страница браузера.
     """
 
     playwright = sync_playwright().start()
