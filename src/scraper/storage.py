@@ -3,11 +3,11 @@ from pathlib import Path
 
 
 DATA_DIR = Path("data")
-PARTICIPANTS_DIR = DATA_DIR / "participants"
+PARTICIPANTS_FILE = DATA_DIR / "participants.csv"
 EVENTS_FILE = DATA_DIR / "events.csv"
 
 
-def save_participants(participants: list[dict], event_id: str,) -> None:
+def save_participants(participants: list[dict]) -> None:
     """
     Сохраняет результаты участников мероприятия в CSV-файл.
     Args:
@@ -25,13 +25,12 @@ def save_participants(participants: list[dict], event_id: str,) -> None:
         print("Нет данных для сохранения.")
         return
 
-    PARTICIPANTS_DIR.mkdir(parents=True, exist_ok=True,)
+    DATA_DIR.mkdir(exist_ok=True)
 
-    file_path = PARTICIPANTS_DIR / f"{event_id}.csv"
-    file_exists = file_path.exists()
+    file_exists = EVENTS_FILE.exists()
     fieldnames = participants[0].keys()
 
-    with open(file_path, "a", newline="", encoding="utf-8-sig",) as file:
+    with PARTICIPANTS_FILE.open("a", newline="", encoding="utf-8-sig",) as file:
 
         writer = csv.DictWriter(file, fieldnames=fieldnames,)
 

@@ -20,39 +20,50 @@ def get_last_page(page: Page) -> int:
     return max(pages)
 
 
-def go_to_page(page: Page, page_num: int) -> None:
+def go_to_page(page: Page, page_num: int) -> bool:
     """
     Переходит на указанную страницу пагинации.
 
-    Если нужная страница не отображается в текущем окне пагинации,
-    функция нажимает кнопку Next, пока нужная страница не станет доступна.
+    Если нужная страница не отображается,
+    переключает окно пагинации кнопкой Next.
 
     Args:
         page (Page):
             Открытая страница Playwright.
 
         page_num (int):
-            Номер страницы, на которую необходимо перейти.
+            Номер страницы.
 
     Returns:
-        None:
-            Функция только выполняет переход и ничего не возвращает.
+        bool:
+            True - переход успешен.
+            False - перейти не удалось.
     """
 
-    print("Переходим на:", page_num)
+    # print(f"Переходим на страницу {page_num}")
 
     button = page.get_by_role("link", name=str(page_num), exact=True)
 
     while button.count() == 0:
-        print("Страница не видна, нажимаем Next")
 
-        page.get_by_role("link", name="Next").click()
+        next_button = page.get_by_role("link",name="Next")
+
+        if next_button.count() == 0:
+            return False
+
+        print(f"Страница {page_num} не видна, нажимаем Next")
+
+        next_button.click()
+
         page.wait_for_timeout(300)
 
-        button = page.get_by_role("link",name=str(page_num),exact=True)
+        button = page.get_by_role("link", name=str(page_num), exact=True)
 
     button.click()
+
     page.wait_for_timeout(1000)
+
+    return get_current_page(page) == page_num
 
 
 def get_current_page(page: Page) -> str:

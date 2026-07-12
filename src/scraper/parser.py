@@ -53,17 +53,35 @@ def parse_rows(page: Page, headers: list[str]) -> list[dict]:
     return results
 
 
-def parse_participants(page: Page) -> list[dict]:
+def parse_participants(
+    page: Page,
+    event_id: str,
+    distance: str
+) -> list[dict]:
     """
-    Полностью извлекает участников из таблицы результатов.
+    Полностью извлекает участников из таблицы результатов
+    и добавляет информацию о мероприятии.
 
     Args:
-        page (Page): Открытая страница результатов Playwright.
+        page (Page):
+            Открытая страница результатов Playwright.
+
+        event_id (int):
+            Идентификатор мероприятия.
+
+        distance (str):
+            Дистанция забега.
+
     Returns:
-        list[dict]: Список участников соревнования.
+        list[dict]:
+            Список участников соревнования.
     """
 
     headers = get_headers(page)
     participants = parse_rows(page, headers)
+
+    for participant in participants:
+        participant["event_id"] = event_id
+        participant["distance"] = distance
 
     return participants

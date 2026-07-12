@@ -1,4 +1,4 @@
-from playwright.sync_api import Page
+from playwright.sync_api import Page, Locator
 
 
 def select_event_filter(page: Page) -> None:
@@ -65,3 +65,31 @@ def normalize_url(url: str | None) -> str | None:
         return f"https://heroleague.ru{url}"
 
     return url
+
+
+
+def select_distance(page: Page, distance: str) -> bool:
+    """
+    Переключает страницу на выбранную дистанцию.
+
+    Args:
+        page (Page):
+            Страница результатов соревнования.
+
+        distance (str):
+            Название дистанции.
+
+    Returns:
+        bool:
+            True, если дистанция выбрана, иначе False.
+    """
+
+    locator = page.locator(f"label[for='{distance}_filter']")
+
+    if locator.count() == 0:
+        return False
+    
+    page.wait_for_timeout(300)
+
+    locator.click()
+    return True
