@@ -68,28 +68,89 @@ def normalize_url(url: str | None) -> str | None:
 
 
 
-def select_distance(page: Page, distance: str) -> bool:
+def select_distance(page: Page, site_distance: str) -> bool:
     """
-    Переключает страницу на выбранную дистанцию.
+    ОПИСАНИЕ!!!
+    """
+
+    locator = page.locator(f"label[for='{site_distance}_filter']")
+
+    if locator.count() == 0:
+        return False
+
+    locator.click()
+    page.wait_for_timeout(300)
+
+    return True
+
+
+def normalize_distance(distance: str) -> str:
+    """
+    Приводит название дистанции к единому виду.
+
+    Args:
+        distance (str):
+            Название дистанции с сайта.
+
+    Returns:
+        str:
+            Нормализованное название дистанции.
+    """
+
+    distance = distance.lower()
+    distance = distance.replace(".", ",")
+    distance = distance.replace(" ", "")
+    distance = distance.replace("km", "км")
+
+    if distance.startswith("1км"):
+        return "1 км"
+
+    if distance.startswith("5км"):
+        return "5 км"
+
+    if distance.startswith("10км"):
+        return "10 км"
+
+    if distance.startswith("21"):
+        return "21 км"
+
+    return distance
+
+
+
+def get_distances(page: Page) -> dict[str, str]:
+    """
+    Извлекает список дистанций мероприятия.
 
     Args:
         page (Page):
             Страница результатов соревнования.
 
-        distance (str):
-            Название дистанции.
-
     Returns:
-        bool:
-            True, если дистанция выбрана, иначе False.
+        dict[str, str]:
+            Словарь вида:
+
+            {
+                "1 км": "1 km",
+                "5 км": "5км",
+                "10 км": "10 km",
+                "21 км": "21.1 km"
+            }
+
+        Ключ — внутреннее название дистанции.
+        Значение — текст кнопки на сайте.
     """
 
-    locator = page.locator(f"label[for='{distance}_filter']")
+    distances = {}
 
-    if locator.count() == 0:
-        return False
-    
-    page.wait_for_timeout(300)
+    labels = page.locator("label[for$='_filter']")
 
-    locator.click()
-    return True
+    for i in range(labels.count()):
+
+        site_name = labels.nth(i).inner_text().strip()
+
+        internal_name = normalize_distance(site_name)
+
+        distances[internal_name] = site_name
+
+    return distances

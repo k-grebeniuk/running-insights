@@ -14,7 +14,7 @@ from event_parser import (
     parse_events,
     select_distance
 )
-
+from event_parser import get_distances
 from playwright.sync_api import Page
 
 
@@ -34,19 +34,11 @@ def main():
     try:
         events = collect_events(page, RESULTS_URL)
 
-        count = 0
-        for event in events:
-            count +=1
-            if event['url'].startswith('https://heroleague.ru/results'):
-                
-                print(f"{count}. {event['city']} --> {event['url']}")
-            else:
-                print(count)
-        #save_events(events)
+        save_events(events)
 
-        #for event in events:
-            #if event['url'].startswith('https://heroleague.ru/results'):
-                #collect_participants(page, event, DISTANCES)
+        for event in events:
+            if event['url'].startswith('https://heroleague.ru/results'):
+                collect_participants(page, event)
 
     finally:
         browser.close()
@@ -56,8 +48,7 @@ def main():
 
 def collect_participants(
     page: Page,
-    event: dict,
-    distances: list[str]
+    event: dict
 ) -> None:
     """
     Собирает участников мероприятия по всем выбранным дистанциям.
@@ -92,17 +83,22 @@ def collect_participants(
         None
     """
 
-    page.goto(event['url'])
+    page.goto(event["url"])
+
     print(f"\nСбор участников: {event['name']} ({event['city']})")
+
     page.wait_for_selector("nav[aria-label='Countries Pagination']")
 
     event_participants = 0
-    for distance in distances:
+
+    distances = get_distances(page)
+
+    for distance, site_distance in distances.items():
+
         print(f"\nДистанция: {distance}")
 
-        selected = select_distance(page, distance)
-        if not selected:
-            print(f'Error: Дистанция "{distance}" не найдена - пропуск')
+        if not select_distance(page, site_distance):
+            print(f'Не удалось выбрать "{distance}"')
             continue
 
         page.wait_for_timeout(2000)
