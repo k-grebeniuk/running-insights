@@ -121,7 +121,8 @@ def collect_participants(
             distance_participants += len(participants)
 
             # сохраняем в CSV
-            save_participants(participants)
+            event_id = f"{event['name']} ({event['city']})"
+            save_participants(participants, event_id)
 
         print(f'Участников на дистанции {distance}: {distance_participants}')
         event_participants += distance_participants
