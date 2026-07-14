@@ -1,4 +1,5 @@
 from playwright.sync_api import Page, Locator
+from distances import is_supported_distance
 
 
 def select_event_filter(page: Page) -> None:
@@ -98,47 +99,55 @@ def normalize_distance(distance: str) -> str:
     """
 
     distance = distance.lower()
-    distance = distance.replace(".", ",")
+    distance = distance.replace(",", ".")
     distance = distance.replace(" ", "")
     distance = distance.replace("km", "км")
 
-    if distance.startswith("1км"):
+    if distance == "21км":
+        return "21.1 км"
+
+    if distance == "21.1км":
+        return "21.1 км"
+
+    if distance == "1км":
         return "1 км"
 
-    if distance.startswith("5км"):
+    if distance == "5км":
         return "5 км"
 
-    if distance.startswith("10км"):
+    if distance == "10км":
         return "10 км"
-
-    if distance.startswith("21"):
-        return "21 км"
 
     return distance
 
 
 
-def get_distances(page: Page) -> dict[str, str]:
+def get_supported_distances(page: Page) -> dict[str, str]:
     """
-    Извлекает список дистанций мероприятия.
+    Извлекает доступные дистанции мероприятия
+    и оставляет только те, которые используются в анализе.
+
+    Функция получает список дистанций со страницы мероприятия,
+    нормализует их названия и фильтрует ненужные категории
+    (например: эстафеты, детские дистанции, корпоративные забеги).
 
     Args:
         page (Page):
-            Страница результатов соревнования.
+            Открытая страница результатов Playwright.
 
     Returns:
         dict[str, str]:
-            Словарь вида:
-
-            {
-                "1 км": "1 km",
-                "5 км": "5км",
-                "10 км": "10 km",
-                "21 км": "21.1 km"
-            }
-
-        Ключ — внутреннее название дистанции.
-        Значение — текст кнопки на сайте.
+            Словарь поддерживаемых дистанций.
+            Ключ:
+                Нормализованное название дистанции.
+            Значение:
+                Название дистанции на сайте.
+            Например:
+                {
+                    "5 км": "5 km",
+                    "10 км": "10 km",
+                    "21 км": "21.1 km"
+                }
     """
 
     distances = {}
@@ -149,8 +158,11 @@ def get_distances(page: Page) -> dict[str, str]:
 
         site_name = labels.nth(i).inner_text().strip()
 
-        internal_name = normalize_distance(site_name)
+        normalized_name  = normalize_distance(site_name)
 
-        distances[internal_name] = site_name
+        if not is_supported_distance(normalized_name ):
+            continue
+
+        distances[normalized_name ] = site_name
 
     return distances

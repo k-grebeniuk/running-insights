@@ -14,7 +14,7 @@ from event_parser import (
     parse_events,
     select_distance
 )
-from event_parser import get_distances
+from event_parser import get_supported_distances
 from playwright.sync_api import Page
 
 
@@ -91,7 +91,7 @@ def collect_participants(
 
     event_participants = 0
 
-    distances = get_distances(page)
+    distances = get_supported_distances(page)
 
     for distance, site_distance in distances.items():
 
@@ -101,13 +101,13 @@ def collect_participants(
             print(f'Не удалось выбрать "{distance}"')
             continue
 
-        page.wait_for_timeout(2000)
+        page.wait_for_timeout(5000)
 
         last_page = get_last_page(page)
         print("Страниц:", last_page)
 
         distance_participants = 0
-        for page_num in range(1, last_page + 1):
+        for page_num in range(1, 1 + 1):    #for page_num in range(1, last_page + 1)
 
             print(f"  Страница {page_num}/{last_page}")
 
@@ -121,7 +121,7 @@ def collect_participants(
             distance_participants += len(participants)
 
             # сохраняем в CSV
-            event_id = f"{event['name']} ({event['city']})"
+            event_id = f"{event['event_id']}. {event['city']} {event['name']}"
             save_participants(participants, event_id)
 
         print(f'Участников на дистанции {distance}: {distance_participants}')

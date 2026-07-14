@@ -16,6 +16,10 @@ def get_last_page(page: Page) -> int:
 
     links = page.locator("nav[aria-label='Countries Pagination'] a").all_inner_texts()
     pages = [int(x) for x in links if x.isdigit()]
+    
+
+    if not pages:
+        return 1
 
     return max(pages)
 
