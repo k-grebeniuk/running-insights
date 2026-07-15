@@ -15,6 +15,9 @@ from event_parser import (
     select_distance
 )
 from event_parser import get_supported_distances
+from waits import wait_for_results
+
+
 from playwright.sync_api import Page
 
 
@@ -37,8 +40,11 @@ def main():
         save_events(events)
 
         for event in events:
-            if event['url'].startswith('https://heroleague.ru/results'):
-                collect_participants(page, event)
+            if event['city'] in {'КУРИЛЬСК',
+                                 'МОСКВА',
+                                 'ЯРОСЛАВЛЬ'}:
+                if event['url'].startswith('https://heroleague.ru/results'):
+                    collect_participants(page, event)
 
     finally:
         browser.close()
@@ -87,11 +93,18 @@ def collect_participants(
 
     print(f"\nСбор участников: {event['name']} ({event['city']})")
 
-    page.wait_for_selector("nav[aria-label='Countries Pagination']")
+    page.wait_for_selector("[role='columnheader']")
 
     event_participants = 0
 
     distances = get_supported_distances(page)
+
+    if not distances:
+        print(
+            f'Не удалось получить список дистанций для '
+            f'{event["name"]} ({event["city"]})'
+        )
+        return
 
     for distance, site_distance in distances.items():
 
@@ -101,13 +114,15 @@ def collect_participants(
             print(f'Не удалось выбрать "{distance}"')
             continue
 
-        page.wait_for_timeout(5000)
+        wait_for_results(page)
+        page.wait_for_timeout(10_000)             # ожидание загрузки кнопок пагинации для дистанции
+        print(f"Результаты загружены: {distance}")
 
         last_page = get_last_page(page)
         print("Страниц:", last_page)
 
         distance_participants = 0
-        for page_num in range(1, 1 + 1):    #for page_num in range(1, last_page + 1)
+        for page_num in range(1, last_page + 1):
 
             print(f"  Страница {page_num}/{last_page}")
 

@@ -16,10 +16,10 @@ def select_event_filter(page: Page) -> None:
     #открываем селектор - выпадающий список
     selector = page.locator(".select-activity-container .select-activity__control")
     selector.click()
-    page.wait_for_timeout(1000)
 
     #выбираем "Забег"
     option = page.get_by_role("option", name="Забег", exact=True)
+    option.wait_for()
     option.click()
     page.wait_for_timeout(3000)
 
@@ -149,10 +149,12 @@ def get_supported_distances(page: Page) -> dict[str, str]:
                     "21 км": "21.1 km"
                 }
     """
+    page.wait_for_selector("label[for$='_filter']")
 
     distances = {}
 
     labels = page.locator("label[for$='_filter']")
+    labels.first.wait_for()
 
     for i in range(labels.count()):
 
