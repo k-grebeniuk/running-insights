@@ -1,24 +1,23 @@
-from browser import create_browser
-from paginator import (
+from playwright.sync_api import Page
+
+from src.scraper.browser import create_browser
+from src.scraper.paginator import (
     get_last_page,
     go_to_page,
-    get_current_page,
 )
-from parser import parse_participants
-from storage import (
+from src.scraper.parser import parse_participants
+from src.scraper.storage import (
     save_participants,
     save_events
 )
-from event_parser import (
+from src.scraper.event_parser import (
     select_event_filter,
     parse_events,
-    select_distance
+    select_distance,
+    get_supported_distances
 )
-from event_parser import get_supported_distances
-from waits import wait_for_results
-
-
-from playwright.sync_api import Page
+from src.scraper.waits import wait_for_results_table_ready
+from src.utils import console
 
 
 def main():
@@ -40,9 +39,7 @@ def main():
         save_events(events)
 
         for event in events:
-            if event['city'] in {'КУРИЛЬСК',
-                                 'МОСКВА',
-                                 'ЯРОСЛАВЛЬ'}:
+            if event['city'] in {'ЗЕЛЕНОГРАДСК'}:
                 if event['url'].startswith('https://heroleague.ru/results'):
                     collect_participants(page, event)
 
@@ -91,40 +88,42 @@ def collect_participants(
 
     page.goto(event["url"])
 
-    print(f"\nСбор участников: {event['name']} ({event['city']})")
+    console.event_started(event['name'], event['city'])
 
     page.wait_for_selector("[role='columnheader']")
+
+    event_id = f"{event['event_id']}. {event['city']} {event['name']}"
 
     event_participants = 0
 
     distances = get_supported_distances(page)
 
     if not distances:
-        print(
-            f'Не удалось получить список дистанций для '
-            f'{event["name"]} ({event["city"]})'
-        )
+        console.distances_not_found(event["name"], event["city"])
         return
+
 
     for distance, site_distance in distances.items():
 
-        print(f"\nДистанция: {distance}")
+        console.distance_started(distance)
 
         if not select_distance(page, site_distance):
-            print(f'Не удалось выбрать "{distance}"')
+            console.distance_not_selected(distance)
             continue
 
-        wait_for_results(page)
-        page.wait_for_timeout(10_000)             # ожидание загрузки кнопок пагинации для дистанции
-        print(f"Результаты загружены: {distance}")
+        # ожидание загрузки кнопок пагинации на странице:
+        wait_for_results_table_ready(page)
+        page.wait_for_timeout(10_000)
+
+        console.results_ready(distance)
 
         last_page = get_last_page(page)
-        print("Страниц:", last_page)
+        console.pages_detected(last_page)
 
         distance_participants = 0
         for page_num in range(1, last_page + 1):
 
-            print(f"  Страница {page_num}/{last_page}")
+            console.page_progress(page_num, last_page)
 
             # переходим на нужную страницу
             go_to_page(page,page_num)
@@ -136,14 +135,13 @@ def collect_participants(
             distance_participants += len(participants)
 
             # сохраняем в CSV
-            event_id = f"{event['event_id']}. {event['city']} {event['name']}"
             save_participants(participants, event_id)
 
-        print(f'Участников на дистанции {distance}: {distance_participants}')
+        console.end_progress()
+        console.distance_finished(distance, distance_participants)
         event_participants += distance_participants
 
-    print(f"Количество участников в {event['name']} ({event['city']}): {event_participants}")
-
+    console.event_finished(event['name'], event['city'], event_participants)
 
 
 def collect_events(
@@ -187,7 +185,3 @@ def collect_events(
         event["event_id"] = event_id
 
     return events
-
-
-if __name__ == "__main__":
-    main()

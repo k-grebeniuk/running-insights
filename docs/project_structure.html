@@ -367,45 +367,72 @@ code {
   </script>
 <h1 id="структура-проекта-running-insights">Структура проекта RUNNING-INSIGHTS</h1>
 <hr>
-<h2 id="scraper_init_py">scraper_<em>init</em>_.py</h2>
+<h2 id="runpy">run.py</h2>
 <p>    <strong>Нет функций</strong></p>
 <hr>
-<h2 id="scraperbrowserpy">scraper\browser.py</h2>
+<h2 id="src_init_py">src_<em>init</em>_.py</h2>
+<p>    <strong>Нет функций</strong></p>
+<hr>
+<h2 id="srcscraper_init_py">src\scraper_<em>init</em>_.py</h2>
+<p>    <strong>Нет функций</strong></p>
+<hr>
+<h2 id="srcscraperbrowserpy">src\scraper\browser.py</h2>
 <p>    <strong>create_browser()</strong> | Создает экземпляр браузера Chromium. <br></p>
 <hr>
-<h2 id="scraperevent_parserpy">scraper\event_parser.py</h2>
+<h2 id="srcscraperdistancespy">src\scraper\distances.py</h2>
+<p>    <strong>is_supported_distance()</strong> | Проверяет, используется ли дистанция в анализе. <br></p>
+<hr>
+<h2 id="srcscraperevent_parserpy">src\scraper\event_parser.py</h2>
 <p>    <strong>select_event_filter()</strong> | Выбирает фильтр &quot;Забег&quot; в списке мероприятий. <br>
     <strong>parse_events()</strong> | Извлекает список мероприятий со страницы результатов. <br>
     <strong>normalize_url()</strong> | Преобразует относительные ссылки в абсолютные. <br>
-    <strong>select_distance()</strong> | ОПИСАНИЕ!!! <br>
+    <strong>select_distance()</strong> | Выбирает дистанцию в фильтре результатов мероприятия. <br>
     <strong>normalize_distance()</strong> | Приводит название дистанции к единому виду. <br>
-    <strong>get_distances()</strong> | Извлекает список дистанций мероприятия. <br></p>
+    <strong>get_supported_distances()</strong> | Извлекает доступные дистанции мероприятия <br></p>
 <hr>
-<h2 id="scrapermainpy">scraper\main.py</h2>
+<h2 id="srcscrapermainpy">src\scraper\main.py</h2>
 <p>    <strong>main()</strong> | Без описания <br>
     <strong>collect_participants()</strong> | Собирает участников мероприятия по всем выбранным дистанциям. <br>
     <strong>collect_events()</strong> | Собирает список мероприятий. <br></p>
 <hr>
-<h2 id="scraperpaginatorpy">scraper\paginator.py</h2>
+<h2 id="srcscraperpaginatorpy">src\scraper\paginator.py</h2>
 <p>    <strong>get_last_page()</strong> | Определяет номер последней страницы пагинации. <br>
     <strong>go_to_page()</strong> | Переходит на указанную страницу пагинации. <br>
     <strong>get_current_page()</strong> | Получает номер текущей активной страницы пагинации. <br></p>
 <hr>
-<h2 id="scraperparserpy">scraper\parser.py</h2>
+<h2 id="srcscraperparserpy">src\scraper\parser.py</h2>
 <p>    <strong>get_headers()</strong> | Извлекает названия колонок таблицы участников. <br>
     <strong>parse_rows()</strong> | Извлекает данные участников из строк таблицы. <br>
     <strong>parse_participants()</strong> | Полностью извлекает участников из таблицы результатов <br></p>
 <hr>
-<h2 id="scraperscraper_summarypy">scraper\scraper_summary.py</h2>
-<p>    <strong>get_functions()</strong> | Возвращает список функций файла: <br>
-    <strong>generate_project_structure()</strong> | Генерирует Markdown-документацию со структурой проекта. <br></p>
-<hr>
-<h2 id="scraperstoragepy">scraper\storage.py</h2>
+<h2 id="srcscraperstoragepy">src\scraper\storage.py</h2>
 <p>    <strong>save_participants()</strong> | Сохраняет результаты участников мероприятия в CSV-файл. <br>
     <strong>save_events()</strong> | Сохраняет информацию о мероприятиях в CSV-файл. <br></p>
 <hr>
-<h2 id="transform_init_py">transform_<em>init</em>_.py</h2>
+<h2 id="srcscraperwaitspy">src\scraper\waits.py</h2>
+<p>    <strong>wait_for_results_table_ready()</strong> | Ожидает появления таблицы результатов после переключения дистанции. <br></p>
+<hr>
+<h2 id="srctoolsproject_structure_generatorpy">src\tools\project_structure_generator.py</h2>
+<p>    <strong>get_functions()</strong> | Извлекает список функций верхнего уровня из Python-файла. <br>
+    <strong>generate_project_structure()</strong> | Генерирует Markdown-документацию со структурой проекта. <br></p>
+<hr>
+<h2 id="srctransform_init_py">src\transform_<em>init</em>_.py</h2>
 <p>    <strong>Нет функций</strong></p>
+<hr>
+<h2 id="srcutils_init_py">src\utils_<em>init</em>_.py</h2>
+<p>    <strong>Нет функций</strong></p>
+<hr>
+<h2 id="srcutilsconsolepy">src\utils\console.py</h2>
+<p>    <strong>event_started()</strong> | Выводит информацию о начале сбора участников мероприятия. <br>
+    <strong>distances_not_found()</strong> | Выводит сообщение об отсутствии доступных для анализа дистанций. <br>
+    <strong>distance_started()</strong> | Отображает начало обработки конкретной дистанции. <br>
+    <strong>distance_not_selected()</strong> | Выводит сообщение о невозможности выбора дистанции на странице. <br>
+    <strong>results_ready()</strong> | Выводит сообщение о готовности страницы к обработке результатов. <br>
+    <strong>pages_detected()</strong> | Выводит количество обнаруженных страниц результатов. <br>
+    <strong>page_progress()</strong> | Обновляет строку прогресса при обработке страниц результатов. <br>
+    <strong>distance_finished()</strong> | Выводит итог обработки отдельной дистанции. <br>
+    <strong>event_finished()</strong> | Выводит итоговый результат обработки мероприятия. <br>
+    <strong>end_progress()</strong> | Завершает строку динамического прогресса в терминале. <br></p>
 
 </body>
 </html>

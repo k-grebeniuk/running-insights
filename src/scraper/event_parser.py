@@ -1,5 +1,5 @@
-from playwright.sync_api import Page, Locator
-from distances import is_supported_distance
+from playwright.sync_api import Page
+from src.scraper.distances import is_supported_distance
 
 
 def select_event_filter(page: Page) -> None:
@@ -71,7 +71,29 @@ def normalize_url(url: str | None) -> str | None:
 
 def select_distance(page: Page, site_distance: str) -> bool:
     """
-    ОПИСАНИЕ!!!
+    Выбирает дистанцию в фильтре результатов мероприятия.
+
+    Функция находит элемент фильтра по названию дистанции,
+    отображаемому на сайте, и переключает таблицу результатов
+    на выбранную дистанцию.
+
+    Args:
+        page (Page):
+            Открытая страница результатов Playwright.
+
+        site_distance (str):
+            Название дистанции в формате сайта.
+            Например:
+                "5км"
+                "10км"
+                "21,1км"
+
+    Returns:
+        bool:
+            True — дистанция успешно найдена и выбрана.
+
+            False — фильтр с указанной дистанцией
+            отсутствует на странице.
     """
 
     locator = page.locator(f"label[for='{site_distance}_filter']")

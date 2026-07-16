@@ -2,14 +2,33 @@ from pathlib import Path
 import ast
 
 
-PROJECT_ROOT = Path("src")
-OUTPUT_FILE = Path("docs/project_structure.md")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+OUTPUT_FILE = PROJECT_ROOT / "docs" / "project_structure.md"
 
 
 def get_functions(file_path: Path) -> list[tuple[str, str]]:
     """
-    Возвращает список функций файла:
-    (имя функции, первая строка docstring)
+    Извлекает список функций верхнего уровня из Python-файла.
+
+    Функция анализирует исходный код с помощью AST,
+    находит все функции верхнего уровня и получает
+    их краткое описание из первой строки docstring.
+
+    Args:
+        file_path (Path):
+            Путь к Python-файлу.
+
+    Returns:
+        list[tuple[str, str]]:
+            Список кортежей вида:
+                (
+                    имя_функции,
+                    краткое_описание
+                )
+
+            Если у функции отсутствует docstring,
+            используется строка "Без описания".
     """
 
     with open(file_path, "r", encoding="utf-8") as f:
@@ -37,7 +56,7 @@ def generate_project_structure() -> None:
     Генерирует Markdown-документацию со структурой проекта.
 
     Функция проходит по всем Python-файлам в проекте,
-    извлекает список функций и их описания из docstring,
+    извлекает список функций верхнего уровня и их описания из docstring,
     после чего сохраняет полученную структуру в Markdown-файл.
 
     Последовательность работы:
