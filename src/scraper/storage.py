@@ -2,8 +2,12 @@ import csv
 from pathlib import Path
 
 
-DATA_DIR = Path("data")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+DATA_DIR = PROJECT_ROOT / "data"
+
 PARTICIPANTS_DIR = DATA_DIR / "participants"
+
 EVENTS_FILE = DATA_DIR / "events.csv"
 
 

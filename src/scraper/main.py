@@ -39,7 +39,8 @@ def main():
         save_events(events)
 
         for event in events:
-            if event['city'] in {'ЗЕЛЕНОГРАДСК'}:
+            if event['city'] in {'МОСКВА',
+                                }:
                 if event['url'].startswith('https://heroleague.ru/results'):
                     collect_participants(page, event)
 
