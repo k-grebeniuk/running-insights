@@ -1,4 +1,4 @@
-from src.scraper.main import main
+from src.scraper.heroleague.main import main
 
 
 if __name__ == "__main__":

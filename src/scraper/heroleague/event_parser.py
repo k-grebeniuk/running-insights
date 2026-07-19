@@ -1,5 +1,5 @@
 from playwright.sync_api import Page
-from src.scraper.distances import is_supported_distance
+from src.scraper.heroleague.distances import is_supported_distance
 
 
 def select_event_filter(page: Page) -> None:

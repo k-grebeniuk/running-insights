@@ -1,22 +1,22 @@
 from playwright.sync_api import Page
 
-from src.scraper.browser import create_browser
-from src.scraper.paginator import (
+from src.scraper.heroleague.browser import create_browser
+from src.scraper.heroleague.paginator import (
     get_last_page,
     go_to_page,
 )
-from src.scraper.parser import parse_participants
-from src.scraper.storage import (
+from src.scraper.heroleague.participant_parser import parse_participants
+from src.storage.csv_writer import (
     save_participants,
     save_events
 )
-from src.scraper.event_parser import (
+from src.scraper.heroleague.event_parser import (
     select_event_filter,
     parse_events,
     select_distance,
     get_supported_distances
 )
-from src.scraper.waits import wait_for_results_table_ready
+from src.scraper.heroleague.waits import wait_for_results_table_ready
 from src.utils import console
 
 
@@ -38,22 +38,36 @@ def main():
 
         save_events(events)
 
+        total_events = 0
+        total_participants = 0
+
+
         for event in events:
-            if event['city'] in {'МОСКВА',
-                                }:
-                if event['url'].startswith('https://heroleague.ru/results'):
-                    collect_participants(page, event)
+
+            if event["city"] in {"ТУЛА"}:
+                continue
+
+            if not event["url"].startswith(
+                "https://heroleague.ru/results"
+            ):
+                continue
+
+            event_participants = collect_participants(page, event)
+            total_participants += event_participants
+            total_events += 1
 
     finally:
         browser.close()
         playwright.stop()
 
+    print(f"\nВсего обработано мероприятий: {total_events}")
+    print(f"\nВсего собрано участников: {total_participants}")
 
 
 def collect_participants(
     page: Page,
     event: dict
-) -> None:
+) -> int:
     """
     Собирает участников мероприятия по всем выбранным дистанциям.
 
@@ -84,7 +98,8 @@ def collect_participants(
                 ]
 
     Returns:
-        None
+        int:
+            Количество участников в данном мероприятии
     """
 
     page.goto(event["url"])
@@ -101,7 +116,7 @@ def collect_participants(
 
     if not distances:
         console.distances_not_found(event["name"], event["city"])
-        return
+        return event_participants
 
 
     for distance, site_distance in distances.items():
@@ -143,6 +158,8 @@ def collect_participants(
         event_participants += distance_participants
 
     console.event_finished(event['name'], event['city'], event_participants)
+
+    return event_participants
 
 
 def collect_events(

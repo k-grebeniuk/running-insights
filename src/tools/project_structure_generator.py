@@ -81,7 +81,7 @@ def generate_project_structure() -> None:
 
             functions = get_functions(file_path)
 
-            file.write(f"\n---\n## {file_path.relative_to(PROJECT_ROOT)}\n")
+            file.write(f"\n---\n## `{file_path.relative_to(PROJECT_ROOT)}`\n")
 
             if not functions:
                 file.write("&nbsp;&nbsp;&nbsp;&nbsp;**Нет функций**\n")
