@@ -367,25 +367,25 @@ code {
   </script>
 <h1 id="структура-проекта-running-insights">Структура проекта RUNNING-INSIGHTS</h1>
 <hr>
-<h2 id="runpy">run.py</h2>
+<h2 id="runpy"><code>run.py</code></h2>
 <p>    <strong>Нет функций</strong></p>
 <hr>
-<h2 id="src_init_py">src_<em>init</em>_.py</h2>
+<h2 id="src__init__py"><code>src\__init__.py</code></h2>
 <p>    <strong>Нет функций</strong></p>
 <hr>
-<h2 id="srcscraper_init_py">src\scraper_<em>init</em>_.py</h2>
+<h2 id="srcscraper__init__py"><code>src\scraper\__init__.py</code></h2>
 <p>    <strong>Нет функций</strong></p>
 <hr>
-<h2 id="srcscraperheroleague_init_py">src\scraper\heroleague_<em>init</em>_.py</h2>
+<h2 id="srcscraperheroleague__init__py"><code>src\scraper\heroleague\__init__.py</code></h2>
 <p>    <strong>Нет функций</strong></p>
 <hr>
-<h2 id="srcscraperheroleaguebrowserpy">src\scraper\heroleague\browser.py</h2>
+<h2 id="srcscraperheroleaguebrowserpy"><code>src\scraper\heroleague\browser.py</code></h2>
 <p>    <strong>create_browser()</strong> | Создает экземпляр браузера Chromium. <br></p>
 <hr>
-<h2 id="srcscraperheroleaguedistancespy">src\scraper\heroleague\distances.py</h2>
+<h2 id="srcscraperheroleaguedistancespy"><code>src\scraper\heroleague\distances.py</code></h2>
 <p>    <strong>is_supported_distance()</strong> | Проверяет, используется ли дистанция в анализе. <br></p>
 <hr>
-<h2 id="srcscraperheroleagueevent_parserpy">src\scraper\heroleague\event_parser.py</h2>
+<h2 id="srcscraperheroleagueevent_parserpy"><code>src\scraper\heroleague\event_parser.py</code></h2>
 <p>    <strong>select_event_filter()</strong> | Выбирает фильтр &quot;Забег&quot; в списке мероприятий. <br>
     <strong>parse_events()</strong> | Извлекает список мероприятий со страницы результатов. <br>
     <strong>normalize_url()</strong> | Преобразует относительные ссылки в абсолютные. <br>
@@ -393,42 +393,42 @@ code {
     <strong>normalize_distance()</strong> | Приводит название дистанции к единому виду. <br>
     <strong>get_supported_distances()</strong> | Извлекает доступные дистанции мероприятия <br></p>
 <hr>
-<h2 id="srcscraperheroleaguemainpy">src\scraper\heroleague\main.py</h2>
+<h2 id="srcscraperheroleaguemainpy"><code>src\scraper\heroleague\main.py</code></h2>
 <p>    <strong>main()</strong> | Без описания <br>
     <strong>collect_participants()</strong> | Собирает участников мероприятия по всем выбранным дистанциям. <br>
     <strong>collect_events()</strong> | Собирает список мероприятий. <br></p>
 <hr>
-<h2 id="srcscraperheroleaguepaginatorpy">src\scraper\heroleague\paginator.py</h2>
+<h2 id="srcscraperheroleaguepaginatorpy"><code>src\scraper\heroleague\paginator.py</code></h2>
 <p>    <strong>get_last_page()</strong> | Определяет номер последней страницы пагинации. <br>
     <strong>go_to_page()</strong> | Переходит на указанную страницу пагинации. <br>
     <strong>get_current_page()</strong> | Получает номер текущей активной страницы пагинации. <br></p>
 <hr>
-<h2 id="srcscraperheroleagueparticipant_parserpy">src\scraper\heroleague\participant_parser.py</h2>
+<h2 id="srcscraperheroleagueparticipant_parserpy"><code>src\scraper\heroleague\participant_parser.py</code></h2>
 <p>    <strong>get_headers()</strong> | Извлекает названия колонок таблицы участников. <br>
     <strong>parse_rows()</strong> | Извлекает данные участников из строк таблицы. <br>
     <strong>parse_participants()</strong> | Полностью извлекает участников из таблицы результатов <br></p>
 <hr>
-<h2 id="srcscraperheroleaguewaitspy">src\scraper\heroleague\waits.py</h2>
+<h2 id="srcscraperheroleaguewaitspy"><code>src\scraper\heroleague\waits.py</code></h2>
 <p>    <strong>wait_for_results_table_ready()</strong> | Ожидает появления таблицы результатов после переключения дистанции. <br></p>
 <hr>
-<h2 id="srcstorage_init_py">src\storage_<em>init</em>_.py</h2>
+<h2 id="srcstorage__init__py"><code>src\storage\__init__.py</code></h2>
 <p>    <strong>Нет функций</strong></p>
 <hr>
-<h2 id="srcstoragecsv_writerpy">src\storage\csv_writer.py</h2>
+<h2 id="srcstoragecsv_writerpy"><code>src\storage\csv_writer.py</code></h2>
 <p>    <strong>save_participants()</strong> | Сохраняет результаты участников мероприятия в CSV-файл. <br>
     <strong>save_events()</strong> | Сохраняет информацию о мероприятиях в CSV-файл. <br></p>
 <hr>
-<h2 id="srctoolsproject_structure_generatorpy">src\tools\project_structure_generator.py</h2>
+<h2 id="srctoolsproject_structure_generatorpy"><code>src\tools\project_structure_generator.py</code></h2>
 <p>    <strong>get_functions()</strong> | Извлекает список функций верхнего уровня из Python-файла. <br>
     <strong>generate_project_structure()</strong> | Генерирует Markdown-документацию со структурой проекта. <br></p>
 <hr>
-<h2 id="srctransform_init_py">src\transform_<em>init</em>_.py</h2>
+<h2 id="srctransform__init__py"><code>src\transform\__init__.py</code></h2>
 <p>    <strong>Нет функций</strong></p>
 <hr>
-<h2 id="srcutils_init_py">src\utils_<em>init</em>_.py</h2>
+<h2 id="srcutils__init__py"><code>src\utils\__init__.py</code></h2>
 <p>    <strong>Нет функций</strong></p>
 <hr>
-<h2 id="srcutilsconsolepy">src\utils\console.py</h2>
+<h2 id="srcutilsconsolepy"><code>src\utils\console.py</code></h2>
 <p>    <strong>event_started()</strong> | Выводит информацию о начале сбора участников мероприятия. <br>
     <strong>distances_not_found()</strong> | Выводит сообщение об отсутствии доступных для анализа дистанций. <br>
     <strong>distance_started()</strong> | Отображает начало обработки конкретной дистанции. <br>

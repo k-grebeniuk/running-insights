@@ -2,36 +2,41 @@ import csv
 from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-DATA_DIR = PROJECT_ROOT / "data"
-
-PARTICIPANTS_DIR = DATA_DIR / "participants"
-
-EVENTS_FILE = DATA_DIR / "events.csv"
-
-
-def save_participants(participants: list[dict], event_id: str,) -> None:
+def save_participants(
+    participants: list[dict],
+    event_id: str,
+    participants_dir: Path,
+) -> None:
     """
     Сохраняет результаты участников мероприятия в CSV-файл.
+
+    Файл сохраняется в указанную директорию и получает имя,
+    сформированное на основе идентификатора мероприятия.
+
+    Если файл уже существует, новые данные добавляются в конец файла.
+
     Args:
         participants (list[dict]):
             Список участников, полученный парсером.
 
         event_id (str):
-            Идентификатор мероприятия.
+            Идентификатор мероприятия, используемый для имени файла.
+
+        participants_dir (Path):
+            Директория для сохранения файлов участников.
 
     Returns:
-        None
+        None:
+            Функция сохраняет данные в файл и ничего не возвращает.
     """
 
     if not participants:
         print("Нет данных для сохранения.")
         return
 
-    PARTICIPANTS_DIR.mkdir(parents=True, exist_ok=True,)
+    participants_dir.mkdir(parents=True, exist_ok=True,)
 
-    file_path = PARTICIPANTS_DIR / f"{event_id}.csv"
+    file_path = participants_dir / f"{event_id}.csv"
     file_exists = file_path.exists()
     fieldnames = participants[0].keys()
 
@@ -46,16 +51,22 @@ def save_participants(participants: list[dict], event_id: str,) -> None:
 
 
 
-def save_events(events: list[dict]) -> None:
+def save_events(
+    events: list[dict],
+    file_path: Path,
+) -> None:
     """
     Сохраняет информацию о мероприятиях в CSV-файл.
 
-    Если файл не существует, создаёт его и записывает заголовки.
-    Если файл существует, добавляет новые строки.
+    Если директория для сохранения отсутствует, она создаётся автоматически.
+    Существующий файл перезаписывается актуальным набором данных.
 
     Args:
         events (list[dict]):
             Список мероприятий для сохранения.
+
+        file_path (Path):
+            Полный путь к файлу сохранения.
 
     Returns:
         None:
@@ -66,18 +77,19 @@ def save_events(events: list[dict]) -> None:
         print("Нет данных для сохранения.")
         return
 
-    DATA_DIR.mkdir(exist_ok=True)
+    file_path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
-    file_exists = EVENTS_FILE.exists()
+    file_exists = file_path.exists()
     fieldnames = events[0].keys()
 
-    with EVENTS_FILE.open("a", newline="", encoding="utf-8") as file:
+    with file_path.open("w", newline="", encoding="utf-8") as file:
 
         writer = csv.DictWriter(file, fieldnames=fieldnames)
 
-        if not file_exists:
-            writer.writeheader()
-
+        writer.writeheader()
         writer.writerows(events)
 
 

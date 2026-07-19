@@ -1,4 +1,5 @@
 from playwright.sync_api import Page
+from pathlib import Path
 
 from src.scraper.heroleague.browser import create_browser
 from src.scraper.heroleague.paginator import (
@@ -31,12 +32,21 @@ def main():
         "21.1 km"
     ]
 
+    PROJECT_ROOT = Path(__file__).resolve().parents[3]
+    EVENTS_FILE = (
+        PROJECT_ROOT
+        / "data"
+        / "raw"
+        / "heroleague"
+        / "events.csv"
+    )
+
     playwright, browser, page = create_browser()
 
     try:
         events = collect_events(page, RESULTS_URL)
 
-        save_events(events)
+        save_events(events, EVENTS_FILE)
 
         total_events = 0
         total_participants = 0
@@ -101,6 +111,14 @@ def collect_participants(
         int:
             Количество участников в данном мероприятии
     """
+    PROJECT_ROOT = Path(__file__).resolve().parents[3]
+
+    PARTICIPANTS_DIR = (
+        PROJECT_ROOT
+        / "data"
+        / "raw"
+        / "heroleague"
+    )
 
     page.goto(event["url"])
 
@@ -137,7 +155,7 @@ def collect_participants(
         console.pages_detected(last_page)
 
         distance_participants = 0
-        for page_num in range(1, last_page + 1):
+        for page_num in range(1, 1 + 1):
 
             console.page_progress(page_num, last_page)
 
@@ -151,7 +169,7 @@ def collect_participants(
             distance_participants += len(participants)
 
             # сохраняем в CSV
-            save_participants(participants, event_id)
+            save_participants(participants, event_id, PARTICIPANTS_DIR)
 
         console.end_progress()
         console.distance_finished(distance, distance_participants)
