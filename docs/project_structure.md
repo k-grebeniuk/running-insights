@@ -56,6 +56,31 @@
 &nbsp;&nbsp;&nbsp;&nbsp;**wait_for_results_table_ready()** | Ожидает появления таблицы результатов после переключения дистанции. <br>
 
 ---
+## `src\scraper\russiarunning\__init.py`
+&nbsp;&nbsp;&nbsp;&nbsp;**Нет функций**
+
+---
+## `src\scraper\russiarunning\api.py`
+&nbsp;&nbsp;&nbsp;&nbsp;**get_event_page()** | Получает одну страницу списка мероприятий RussiaRunning. <br>
+
+---
+## `src\scraper\russiarunning\event_filter.py`
+&nbsp;&nbsp;&nbsp;&nbsp;**filter_events()** | Исключает из списка мероприятия, которые не должны участвовать <br>
+
+---
+## `src\scraper\russiarunning\event_parser.py`
+&nbsp;&nbsp;&nbsp;&nbsp;**parse_event_page()** | Извлекает список мероприятий из ответа API. <br>
+
+---
+## `src\scraper\russiarunning\main.py`
+&nbsp;&nbsp;&nbsp;&nbsp;**main()** | Без описания <br>
+&nbsp;&nbsp;&nbsp;&nbsp;**collect_events()** | Собирает список мероприятий с сайта RussiaRunning. <br>
+
+---
+## `src\scraper\russiarunning\participant_parser.py`
+&nbsp;&nbsp;&nbsp;&nbsp;**Нет функций**
+
+---
 ## `src\storage\__init__.py`
 &nbsp;&nbsp;&nbsp;&nbsp;**Нет функций**
 
@@ -63,6 +88,10 @@
 ## `src\storage\csv_writer.py`
 &nbsp;&nbsp;&nbsp;&nbsp;**save_participants()** | Сохраняет результаты участников мероприятия в CSV-файл. <br>
 &nbsp;&nbsp;&nbsp;&nbsp;**save_events()** | Сохраняет информацию о мероприятиях в CSV-файл. <br>
+
+---
+## `src\storage\json_writer.py`
+&nbsp;&nbsp;&nbsp;&nbsp;**save_json()** | Сохраняет список словарей в JSON-файл. <br>
 
 ---
 ## `src\tools\project_structure_generator.py`

@@ -13,3 +13,27 @@ def parse_event_page(page_data: dict[str, Any]) -> list[dict[str, Any]]:
     """
 
     return page_data["list"]
+
+
+def extract_races(event: dict) -> list[dict]:
+    """
+    Извлекает информацию о дистанциях мероприятия.
+
+    Args:
+        event:
+            Данные одного мероприятия,
+            полученные из API.
+
+    Returns:
+        Список дистанций с идентификаторами,
+        названием и длиной.
+    """
+
+    return [
+        {
+            "race_id": race["id"],
+            "race_name": race["name"],
+            "distance": race["distance"],
+        }
+        for race in event["races"]
+]

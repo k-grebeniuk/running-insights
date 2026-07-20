@@ -1,5 +1,7 @@
-from src.scraper.russiarunning.api import get_event_page
-from src.scraper.russiarunning.event_parser import parse_event_page
+from src.scraper.russiarunning.api import (get_event_page,
+                                           get_event)
+from src.scraper.russiarunning.event_parser import (parse_event_page,
+                                                    extract_races)
 from src.scraper.russiarunning.event_filter import filter_events
 from src.storage.json_writer import save_json
 
@@ -9,18 +11,34 @@ from pathlib import Path
 def main():
     all_events = collect_events()
     filtered_events  = filter_events(all_events)
+
     save_json(
         filtered_events ,
         Path("data/raw/russiarunning/events.json"),
     )
 
+    races = []
 
-    for event in all_events:
-        print(event)
+    for event in filtered_events:
+        event_data = get_event(event["code"])
+        event_races = extract_races(event_data)
+
+        for race in event_races:
+            race["event_id"] = event["id"]
+            race["event_code"] = event["code"]
+            race["event_title"] = event["title"]
+            
+        print(event["title"])
+        for race in event_races:
+            print(race)        
         print()
 
-    print(len(all_events))
+        races.extend(event_races)
 
+    save_json(
+        races,
+        Path("data/raw/russiarunning/races.json"),
+    )
 
 def collect_events() -> list[dict]:
     """
