@@ -11,4 +11,4 @@ venv/
 .idea/
 
 # Data
-*.csv
+data/
