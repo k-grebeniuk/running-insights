@@ -1,0 +1,8 @@
+﻿race_type_id,race_type_code,race_type_name
+1,running,Бег
+2,nordic_walking,Северная ходьба
+3,children,Детский забег
+4,relay,Эстафета
+5,corporate,Корпоративный
+6,adaptive,Адаптивный
+7,other,Другое

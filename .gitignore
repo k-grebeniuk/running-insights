@@ -11,7 +11,10 @@ venv/
 .idea/
 
 # Data
-data/
+data/raw/
+data/interim/
+data/processed/
+data/test/
 
 # Keep reference data
 !data/reference/
