@@ -53,6 +53,7 @@ def main():
             participant["race_id"] = race["race_id"]
             participant["race_name"] = race["race_name"]
 
+            #убираем неиспользуемые данные об участниках (опционально):
             participant.pop("stageResults", None)
             participant.pop("video")
 

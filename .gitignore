@@ -12,3 +12,7 @@ venv/
 
 # Data
 data/
+
+# Keep reference data
+!data/reference/
+!data/reference/*.csv
