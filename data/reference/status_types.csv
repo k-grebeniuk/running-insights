@@ -1,0 +1,6 @@
+status_id,status_code,status_name
+0,finished,Финишировал
+1,dnf,Не финишировал
+2,dsq,Дисквалифицирован
+3,dns,Не стартовал
+4,nc,Не классифицирован
