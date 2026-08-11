@@ -4,7 +4,7 @@ import pandas as pd
 
 
 RAW_RACES_PATH = Path(
-    "data/raw/russiarunning/races.json"
+    "data/raw/races.json"
 )
 
 RAW_CATALOG_PATH = Path(

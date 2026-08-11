@@ -71,7 +71,7 @@ def merge_events(
     """
 
     events = pd.read_json(
-        "data/raw/russiarunning/events.json"
+        "data/raw/events.json"
     )
 
     dataset = participants.merge(
@@ -219,7 +219,7 @@ def main() -> None:
 
     participants = pd.read_csv("data/processed/participants_raw.csv")
 
-    races = pd.read_json("data/raw/russiarunning/races.json")
+    races = pd.read_json("data/raw/races.json")
 
     # Добавляем расшифровку статуса и пола:
     dataset = merge_participant_references(participants)

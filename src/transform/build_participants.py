@@ -4,7 +4,7 @@ import pandas as pd
 
 
 PARTICIPANTS_DIR = Path(
-    "data/raw/russiarunning/participants"
+    "data/raw/participants"
 )
 
 OUTPUT_FILE = Path(
