@@ -34,6 +34,8 @@ def extract_races(event: dict) -> list[dict]:
             "race_id": race["id"],
             "race_name": race["name"],
             "distance": race["distance"],
+            "is_complex": race["isComplex"],
+            "is_relay": race["isRelay"],
         }
         for race in event["races"]
 ]

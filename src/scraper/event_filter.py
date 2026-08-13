@@ -1,6 +1,5 @@
 EXCLUDED_EVENT_CODES = {
-    "DetskiyzabegBEGIGEROY2026",
-    "BlagotvoritelnyypolumarafonBEGIGEROY2026",
+
 }
 
 

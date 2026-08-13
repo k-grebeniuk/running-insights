@@ -1,7 +1,10 @@
 from typing import Any
 
+import logging
 import requests
 
+
+logger = logging.getLogger(__name__)
 
 # Эндпоинты API
 # базовый адрес:
@@ -10,18 +13,96 @@ BASE_URL = "https://results.russiarunning.com/api"
 EVENTS_LIST_URL = f"{BASE_URL}/events/list"
 # вернуть подробную информацию об одном мероприятии:
 EVENTS_GET_URL = f"{BASE_URL}/events/get"
-# ...
-PARTICIPANTS_GET_URL = f"{BASE_URL}/results/individual/get"
+# вернуть информацию об индивидуальных результатах
+INDIVIDUAL_RESULTS_GET_URL = f"{BASE_URL}/results/individual/get"
+# вернуть информацию о результатах эстафеты
+RELAY_RESULTS_GET_URL = f"{BASE_URL}/results/relay/get"
+
 
 REQUEST_TIMEOUT = 30
 
 session = requests.Session()
+
 session.headers.update({
     "User-Agent": (
         "running-insights/1.0 "
         "(https://github.com/k-grebeniuk/running-insights)"
     )
 })
+
+
+def _post(
+    url: str,
+    payload: dict[str, Any],
+) -> dict[str, Any]:
+    """
+    Выполняет POST-запрос к API RussiaRunning.
+
+    При успешном выполнении возвращает JSON-ответ API.
+    В случае ошибки записывает информацию в лог
+    и повторно вызывает исключение.
+
+    Args:
+        url (str):
+            URL эндпоинта API.
+
+        payload (dict[str, Any]):
+            Данные, передаваемые в теле POST-запроса.
+
+    Returns:
+        dict[str, Any]:
+            JSON-ответ API в виде словаря.
+
+    Raises:
+        requests.Timeout:
+            Если время ожидания ответа API истекло.
+
+        requests.ConnectionError:
+            Если не удалось установить соединение с API.
+
+        requests.HTTPError:
+            Если API вернул HTTP-ошибку.
+    """
+
+    try:
+        response = session.post(
+            url,
+            json=payload,
+            timeout=REQUEST_TIMEOUT,
+        )
+
+        response.raise_for_status()
+
+        return response.json()
+
+    except requests.Timeout:
+        logger.error(
+            "Таймаут API-запроса: %s",
+            url,
+        )
+        raise
+
+    except requests.ConnectionError:
+        logger.error(
+            "Ошибка соединения с API: %s",
+            url,
+        )
+        raise
+
+    except requests.HTTPError as error:
+        status_code = (
+            error.response.status_code
+            if error.response is not None
+            else "unknown"
+        )
+
+        logger.error(
+            "Ошибка API: HTTP %s — %s",
+            status_code,
+            url,
+        )
+        raise
+
 
 
 def get_event_page(
@@ -56,15 +137,10 @@ def get_event_page(
         "language": "ru",
     }
 
-    response = session.post(
+    return _post(
         EVENTS_LIST_URL,
-        json=payload,
-        timeout=REQUEST_TIMEOUT ,
+        payload,
     )
-
-    response.raise_for_status()
-
-    return response.json()
 
 
 def get_event(event_code: str,) -> dict[str, Any]:
@@ -81,15 +157,11 @@ def get_event(event_code: str,) -> dict[str, Any]:
     """
 
     payload = {"eventCode": event_code, "language": "ru",}
-    response = session.post(
+
+    return _post(
         EVENTS_GET_URL,
-        json=payload,
-        timeout=REQUEST_TIMEOUT ,
+        payload,
     )
-
-    response.raise_for_status()
-
-    return response.json()
 
 
 def get_participants_page(
@@ -99,7 +171,7 @@ def get_participants_page(
     page_size: int,
 ) -> dict[str, Any]:
     """
-    Получает одну страницу участников выбранной дистанции.
+    Получает одну страницу индивидуальных результатов выбранной дистанции.
 
     Args:
         event_id:
@@ -130,14 +202,52 @@ def get_participants_page(
     },
 }
     
-    response = session.post(
-        PARTICIPANTS_GET_URL,
-        json=payload,
-        timeout=REQUEST_TIMEOUT,
+    return _post(
+        INDIVIDUAL_RESULTS_GET_URL,
+        payload,
     )
 
-    response.raise_for_status()
 
-    return response.json()
+def get_relay_page(
+    event_id: str,
+    race_id: str,
+    skip: int,
+    page_size: int,
+) -> dict[str, Any]:
+    """
+    Получает одну страницу результатов эстафеты.
 
+    Args:
+        event_id:
+            Идентификатор мероприятия.
 
+        race_id:
+            Идентификатор дистанции.
+
+        skip:
+            Количество результатов, которое необходимо пропустить.
+
+        page_size:
+            Количество результатов, которое необходимо получить.
+
+    Returns:
+        dict[str, Any]:
+            JSON-ответ API в виде словаря.
+    """
+
+    payload = {
+        "eventId": event_id,
+        "raceId": race_id,
+        "filter": {},
+        "isStagesOn": True,
+        "language": "ru",
+        "page": {
+            "skip": skip,
+            "take": page_size,
+        },
+    }
+
+    return _post(
+        RELAY_RESULTS_GET_URL,
+        payload,
+    )
