@@ -99,7 +99,8 @@ def collect_races(events: list[dict]) -> list[dict]:
 def collect_participants(
     event_id: str,
     race_id: str,
-) -> list[dict]:
+    race_name: str,
+):
     """
     Собирает всех участников одной дистанции.
 
@@ -112,6 +113,10 @@ def collect_participants(
 
         race_id:
             Идентификатор дистанции.
+
+        race_name:
+            Название дистанции для отображения
+            прогресса сбора в консоли.
 
     Returns:
         Список участников дистанции.
@@ -145,7 +150,7 @@ def collect_participants(
         total_count = page_data["totalCount"]
 
         show_progress(
-            "Собрано участников",
+            f"→ {race_name} | Собрано",
             len(participants),
             total_count,
         )
@@ -156,6 +161,7 @@ def collect_participants(
         skip += page_size
 
         time.sleep(0.3)
+
     print()
 
     return participants
