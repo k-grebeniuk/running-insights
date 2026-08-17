@@ -23,9 +23,19 @@
 
 ---
 ## `src\scraper\api.py`
+&nbsp;&nbsp;&nbsp;&nbsp;**_post()** | Выполняет POST-запрос к API RussiaRunning. <br>
 &nbsp;&nbsp;&nbsp;&nbsp;**get_event_page()** | Получает одну страницу списка мероприятий RussiaRunning. <br>
 &nbsp;&nbsp;&nbsp;&nbsp;**get_event()** | Получает подробную информацию о мероприятии RussiaRunning. <br>
-&nbsp;&nbsp;&nbsp;&nbsp;**get_participants_page()** | Получает одну страницу участников выбранной дистанции. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;**get_participants_page()** | Получает одну страницу индивидуальных результатов выбранной дистанции. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;**get_relay_page()** | Получает одну страницу результатов эстафеты. <br>
+
+---
+## `src\scraper\collector.py`
+&nbsp;&nbsp;&nbsp;&nbsp;**collect_events()** | Собирает все мероприятия за указанный период. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;**collect_races()** | Собирает все дистанции для переданных мероприятий. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;**collect_participants()** | Собирает всех участников одной дистанции. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;**collect_relay_results()** | Собирает все результаты эстафеты одной дистанции. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;**collect_total_results_count()** | Получает общее количество результатов по всем дистанциям. <br>
 
 ---
 ## `src\scraper\event_filter.py`
@@ -39,8 +49,6 @@
 ---
 ## `src\scraper\main.py`
 &nbsp;&nbsp;&nbsp;&nbsp;**main()** | Без описания <br>
-&nbsp;&nbsp;&nbsp;&nbsp;**collect_participants()** | Собирает всех участников одной дистанции. <br>
-&nbsp;&nbsp;&nbsp;&nbsp;**collect_events()** | Собирает список мероприятий с сайта RussiaRunning. <br>
 
 ---
 ## `src\scraper\participant_parser.py`
@@ -75,3 +83,15 @@
 ---
 ## `src\transform\build_participants.py`
 &nbsp;&nbsp;&nbsp;&nbsp;**build_participants()** | Объединяет данные об участниках из отдельных JSON-файлов <br>
+
+---
+## `src\utils\console.py`
+&nbsp;&nbsp;&nbsp;&nbsp;**show_collection_start()** | Отображает начало сбора данных за указанную дату. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;**show_event()** | Отображает название текущего мероприятия. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;**show_race()** | Отображает название текущей дистанции. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;**show_progress()** | Отображает текущий прогресс сбора результатов. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;**show_collection_end()** | Отображает завершение сбора данных. <br>
+
+---
+## `src\utils\logger.py`
+&nbsp;&nbsp;&nbsp;&nbsp;**get_logger()** | Создаёт и настраивает логгер проекта. <br>

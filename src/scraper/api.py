@@ -129,6 +129,7 @@ def get_event_page(
             "place": None,
             "dateFrom": date_from,
             "dateTo": date_to,
+            "disciplinesCodes": ["run"]
         },
         "page": {
             "skip": skip,

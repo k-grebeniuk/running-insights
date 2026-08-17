@@ -1,5 +1,7 @@
 import time
+import requests
 
+from src.utils.logger import get_logger
 from src.scraper.api import (
     get_event_page,
     get_event,
@@ -15,6 +17,8 @@ from src.utils.console import (
     show_race,
     show_event
 )
+
+logger = get_logger(__name__)
 
 
 def collect_events(
@@ -99,42 +103,59 @@ def collect_participants(
     """
     Собирает всех участников одной дистанции.
 
+    Если для дистанции отсутствуют результаты,
+    возвращает пустой список.
+
     Args:
-        event_id: Идентификатор мероприятия.
-        race_id: Идентификатор дистанции.
+        event_id:
+            Идентификатор мероприятия.
+
+        race_id:
+            Идентификатор дистанции.
 
     Returns:
         Список участников дистанции.
+        Пустой список, если результаты отсутствуют.
     """
+
     participants = []
 
     page_size = 50
     skip = 0
 
     while True:
-        page_data = get_participants_page(
-            event_id=event_id,
-            race_id=race_id,
-            skip=skip,
-            page_size=page_size,
-        )
+
+        try:
+            page_data = get_participants_page(
+                event_id=event_id,
+                race_id=race_id,
+                skip=skip,
+                page_size=page_size,
+            )
+
+        except requests.HTTPError as error:
+
+            if error.response is not None and error.response.status_code == 404:
+                return []
+
+            raise
 
         participants.extend(page_data["results"])
 
         total_count = page_data["totalCount"]
 
         show_progress(
-            label="Собрано участников",
-            current=len(participants),
-            total=total_count,
-)
+            "Собрано участников",
+            len(participants),
+            total_count,
+        )
+
         if len(participants) >= total_count:
             break
 
         skip += page_size
 
         time.sleep(0.3)
-
     print()
 
     return participants
@@ -193,3 +214,55 @@ def collect_relay_results(
     print()
 
     return relay_results
+
+
+def collect_total_results_count(races: list[dict]) -> int:
+    """
+    Получает общее количество результатов по всем дистанциям.
+
+    Дистанции без результатов пропускаются.
+
+    Args:
+        races:
+            Список дистанций мероприятий.
+
+    Returns:
+        Общее количество результатов.
+    """
+
+    total_results_count = 0
+
+    for race in races:
+
+        print(f'Проверяю: {race["event_title"]} — {race["race_name"]}')
+        try:
+            if race["is_relay"]:
+                page_data = get_relay_page(
+                    event_id=race["event_id"],
+                    race_id=race["race_id"],
+                    skip=0,
+                    page_size=1,
+                )
+            else:
+                page_data = get_participants_page(
+                    event_id=race["event_id"],
+                    race_id=race["race_id"],
+                    skip=0,
+                    page_size=1,
+                )
+
+        except requests.HTTPError as error:
+
+            if error.response is not None and error.response.status_code == 404:
+                logger.warning(
+                    "Нет результатов: %s — %s",
+                    race["event_title"],
+                    race["race_name"],
+                )
+                continue
+
+            raise
+
+        total_results_count += page_data["totalCount"]
+
+    return total_results_count

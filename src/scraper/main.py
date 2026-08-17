@@ -4,7 +4,8 @@ from src.scraper.collector import (
     collect_events,
     collect_races,
     collect_participants,
-    collect_relay_results
+    collect_relay_results,
+    collect_total_results_count
 )
 from src.scraper.event_filter import filter_events
 from src.storage.json_writer import save_json
@@ -21,15 +22,23 @@ logger = get_logger(__name__)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-EVENT_DATES = [
-    #"2026-05-23",
-    #"2025-05-24",
-    #"2024-05-19",
-    "2023-06-04"
-]
+EVENT_DATES = (
+    "2026-05-23",
+    "2025-05-24",
+    "2024-05-19",
+    "2023-06-04",
+    "2022-05-22",
+    "2021-05-30",
+    "2020-08-02",
+    "2019-05-19",
+    "2018-05-20",
+    "2017-05-21"
+)
+
 
 def main():
 
+    result_counts = []
     for event_date in EVENT_DATES:
 
         logger.info("Начало сбора данных: %s", event_date)
@@ -57,31 +66,38 @@ def main():
         date_from = f"{event_date}T00:00:00.000Z"
         date_to = f"{event_date}T23:59:00.000Z"
 
-        # 1. Собираем мероприятия
+        # собираем мероприятия
         events = collect_events(
             date_from=date_from,
             date_to=date_to,
         )
 
-        # 2. Фильтруем мероприятия
+        # фильтруем мероприятия
         filtered_events = filter_events(events)
 
-        # 3. Сохраняем мероприятия
+        # сохраняем мероприятия
         save_json(
             filtered_events,
             events_path,
         )
 
-        # 4. Собираем дистанции
+        # собираем дистанции
         races = collect_races(filtered_events)
 
-        # 5. Сохраняем дистанции
+        # сохраняем дистанции
         save_json(
             races,
             races_path,
         )
 
-        # 6. Собираем участников
+        # предварительно считаем общее количество результатов
+        total_results_count = collect_total_results_count(races)
+        result_counts.append(f"{event_date} ==== {total_results_count:_}")
+        print(event_date, '====', total_results_count)
+
+    print('\n', *result_counts, sep='\n')
+
+    '''    # собираем участников
         current_event_id = None
 
         for race in races:
@@ -125,10 +141,11 @@ def main():
                 result["race_id"] = race["race_id"]
                 result["race_name"] = race["race_name"]
 
-            save_json(
-                results,
-                save_dir / f'{race["event_code"]}_{race["race_id"]}.json',
-            )
+            if results:
+                save_json(
+                    results,
+                    save_dir / (f'{event_date}_{race["event_code"]}_{race["race_id"]}.json'),
+                )
 
             logger.info(
                 "Сбор завершён: %s — %s: %d результатов",
@@ -137,7 +154,7 @@ def main():
                 len(results),
             )
             
-        show_collection_end()
+        show_collection_end()'''
 
 if __name__ == "__main__":
     main()
