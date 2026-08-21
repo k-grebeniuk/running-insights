@@ -24,15 +24,15 @@ logger = get_logger(__name__)
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 EVENT_DATES = (
-    #"2026-05-23",
-    #"2025-05-24",
-    #"2024-05-19",
-    #"2023-06-04",
-    #"2022-05-22",
-    #"2021-05-30",
-    #"2020-08-02",
-    #"2019-05-19",
-    #"2018-05-20",
+    "2026-05-23",
+    "2025-05-24",
+    "2024-05-19",
+    "2023-06-04",
+    "2022-05-22",
+    "2021-05-30",
+    "2020-08-02",
+    "2019-05-19",
+    "2018-05-20",
     "2017-05-21",
 )
 
@@ -123,6 +123,9 @@ def main():
                     race_id=race["race_id"],
                 )
 
+                for result in results:
+                    result.pop("stagesResults", None)
+
                 save_dir = relay_dir
 
             else:
@@ -150,7 +153,15 @@ def main():
             if results:
                 save_json(
                     results,
-                    save_dir / (f'{event_date}_{race["event_code"]}_{race["race_id"]}.json'),
+                    save_dir / (
+                        f'{event_date}_{race["event_code"]}_{race["race_id"]}.json'
+                    ),
+                )
+            else:
+                logger.warning(
+                    "Нет результатов: %s — %s",
+                    race["event_title"],
+                    race["race_name"],
                 )
 
             logger.info(
